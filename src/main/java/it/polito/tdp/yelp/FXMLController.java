@@ -35,13 +35,13 @@ public class FXMLController {
     private Button btnPercorso; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbCitta"
-    private ComboBox<?> cmbCitta; // Value injected by FXMLLoader
+    private ComboBox<String> cmbCitta; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtX"
     private TextField txtX; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbLocale"
     private ComboBox<?> cmbLocale; // Value injected by FXMLLoader
@@ -57,11 +57,32 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
 
+    	
+    	Integer year = cmbAnno.getValue() ;
+    	if(year==null) {
+    		txtResult.appendText("Seleziona un anno!\n");
+    		return ;
+    	}
+    	
+    	String city = cmbCitta.getValue() ;
+    	if(city == null) {
+    		txtResult.appendText("Seleziona un città!\n");
+    		return ;
+    	}
+    	
+    	txtResult.setText(this.model.creaGrafo(cmbCitta.getValue(), cmbAnno.getValue()));
+    	
     }
 
     @FXML
     void doLocaleMigliore(ActionEvent event) {
-
+    	
+    	if(!model.grafoCreato()) {
+    		txtResult.appendText("Crea prima il grafo!\n");
+    		return ;
+    	}
+    	
+    	txtResult.setText(this.model.getLocaleMigliore());;
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -74,9 +95,14 @@ public class FXMLController {
         assert cmbAnno != null : "fx:id=\"cmbAnno\" was not injected: check your FXML file 'Scene.fxml'.";
         assert cmbLocale != null : "fx:id=\"cmbLocale\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
+        
+        for(int anno=2005; anno<2014; anno++ ) {
+        	cmbAnno.getItems().add(anno) ;
+        }
     }
     
     public void setModel(Model model) {
     	this.model = model;
+    	cmbCitta.getItems().addAll(this.model.getCities()) ;
     }
 }
